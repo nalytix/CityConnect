@@ -1,0 +1,51 @@
+// imports
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+
+
+var CoordinatesSchema = new mongoose.Schema({
+	 
+	type 							: {type : String},
+	coordinates						: []
+
+ });
+ 
+var PolygonSchema = new mongoose.Schema({
+	 
+	type 							: {type : String},
+	coordinates						: []
+
+ });
+ 
+mongoose.model('Polygon',PolygonSchema);
+
+var ContactSchema = new mongoose.Schema({
+	 
+	name 							: String,
+	email							: String,
+	phone							: String,
+	mobile							: String,
+	position						: String
+
+ });
+ 
+mongoose.model('Contact',ContactSchema);
+
+var communitySchema = new Schema({
+	name: String,
+	country: String,
+	region: String,
+	postal_code: String,
+	polygon: PolygonSchema,
+	coordinates: CoordinatesSchema,
+	image_urls: [String],
+	facts: [String],
+	status: String, // pending, silver, gold, platinum, inactive 
+	type: String, // suburban-manufacturing,suburban-residential,suburban-retail,metro,collegetown,tourism,rural
+	program: String, // flagship, live-local
+	contacts: [ContactSchema]
+});
+
+var Community = mongoose.model('Community', communitySchema);
+
+module.exports = Community;
