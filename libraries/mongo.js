@@ -331,6 +331,32 @@ var update_contacts = function(communityId, contacts, callback){
 	
 };
 
+var get_current_community = function(lat, lng, proxInMeters, callback){
+	
+	Community.find( { coordinates: 
+							{ $nearSphere:
+								{ $geometry: 
+									{ type: "Point", 
+									  coordinates: [lng, lat] 
+									},
+									"$minDistance": 0,
+									"$maxDistance": proxInMeters
+								}
+								
+							} 
+						}, 
+						function(err, communityList){
+							
+							if (!err)
+								callback({"status": "success", "communityList":communityList});
+							else 
+								callback({"status": "error", "error_msg":err});
+							
+						}
+	);
+	
+};
+
 module.exports = {
 	
 	add_community: add_community,
@@ -340,6 +366,7 @@ module.exports = {
 	delete_polygon: delete_polygon,
 	update_image_urls: update_image_urls,
 	update_facts: update_facts,
-	update_contacts: update_contacts
+	update_contacts: update_contacts,
+	get_current_community: get_current_community
 
 };

@@ -3,6 +3,7 @@ var request = require('request');
 var profileRouter = express.Router();
 var db = require('../libraries/mongo');
 var config = require('../configs/config');
+var functions = require('../libraries/utilities');
 
 // API to add a new community to the database
 profileRouter.route('/add')
@@ -261,6 +262,75 @@ profileRouter.route('/:id/contacts/update')
 		});
 		
 	});
+	
+// API to get closest location
+profileRouter.route('/:user_id/:lat/:lng')
+	.get (function(req, res){
+		
+		var reqUser = req.params.user_id;
+		var reqLat = req.params.lat;
+		var reqLng = req.params.lng;
+		var reqProxInMiles = config.proximityInMiles;
+		
+		//convert configuration in miles to meters
+		if (!reqProxInMiles || reqProxInMiles == null)
+			reqProxInMiles = config.communityProximity;
+		
+		proximityInMeters = reqProxInMiles * 1609.344;
+		
+		db.get_current_community(reqLat, reqLng, proximityInMeters, function(resp){
 
+			if ( resp.status == "success"){
+
+				if (resp.communityList.length > 0) {
+					var communityList = resp.communityList;
+					var image_url = "";
+					var fact = "";
+					var welcomeMessage = config.fixedWelcomeMessage;
+					var factMessage = config.fixedFactMessage;
+
+					// Find an image to send)
+					if ( communityList[0].image_urls && communityList[0].image_urls.length > 0 ) {
+						image_url = communityList[0].image_urls[functions.getRandomInt(communityList[0].image_urls.length)];
+					}
+
+					if ( communityList[0].facts && communityList[0].facts.length > 0 ) {
+						fact = communityList[0].facts[functions.getRandomInt(communityList[0].facts.length)];
+					}
+
+					var responseObject = {
+						"status": "success",
+						"data": {
+							"proximity_type": "near",
+							"welcome_message": welcomeMessage,
+							"name": communityList[0].name,
+							"country": communityList[0].country,
+							"region": communityList[0].region,
+							"postal_code": communityList[0].postal_code,
+							"image_url": image_url,
+							"fact_message": factMessage,
+							"fact": fact,
+							"status": communityList[0].status,
+							"type": communityList[0].type,
+							"program": communityList[0].program
+						}	
+					}
+				} else {
+
+					res.status(404).send({"status": "error", "error_msg": "Not Found"});	
+
+				}
+				
+				res.status(200).send(responseObject);
+			} else {
+
+				// return the error condition
+				res.status(404).send(resp);
+
+			}
+			
+		});	
+		
+	});
 	
 module.exports = profileRouter;
