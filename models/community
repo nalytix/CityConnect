@@ -33,6 +33,8 @@ mongoose.model('Contact',ContactSchema);
 
 var communitySchema = new Schema({
 	name: String,
+	display_name: String,
+	partner_organization: String,
 	country: String,
 	region: String,
 	postal_code: String,

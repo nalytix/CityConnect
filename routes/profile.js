@@ -16,6 +16,8 @@ profileRouter.route('/add')
 		// create the community object
 		var community = {};
 		community.name = req.body.name;
+		community.display_name = req.body.display_name;
+		community.partner_organization = req.body.partner_organization;
 		community.country = req.body.country;
 		community.region = req.body.region;
 		community.postal_code = req.body.postal_code;
@@ -303,7 +305,9 @@ profileRouter.route('/:user_id/:lat/:lng')
 						"data": {
 							"proximity_type": "near",
 							"welcome_message": welcomeMessage,
-							"name": communityList[0].name,
+							"name": communityList[0].display_name,
+							"actual_name": communityList[0].name,
+							"partner_organization": communityList[0].partner_organization,
 							"country": communityList[0].country,
 							"region": communityList[0].region,
 							"postal_code": communityList[0].postal_code,
