@@ -357,6 +357,46 @@ var get_current_community = function(lat, lng, proxInMeters, callback){
 	
 };
 
+// Database Service to retrieve a community based on Id
+var get_all_communities = function(callback){
+	
+	Community.find({}, function(dberr, queriedCommunities){
+
+		if (dberr) {
+			
+			callback({
+					"error_code": 404,
+					"error_name": "DBError",
+					"error_message": dberr
+				},
+				null
+			);
+			
+		} else {
+			
+			if ( queriedCommunities && queriedCommunities.length > 0 ) {
+
+				
+				callback(null, queriedCommunities);
+				
+			} else {
+				
+				callback({
+						"error_code": 404,
+						"error_name": "NotFound",
+						"error_message": "Db did not return object"
+					},
+					null
+				);
+				
+			}
+			
+		}
+		
+	});
+	
+};
+
 module.exports = {
 	
 	add_community: add_community,
@@ -367,6 +407,7 @@ module.exports = {
 	update_image_urls: update_image_urls,
 	update_facts: update_facts,
 	update_contacts: update_contacts,
-	get_current_community: get_current_community
+	get_current_community: get_current_community,
+	get_all_communities: get_all_communities
 
 };

@@ -82,7 +82,38 @@ profileRouter.route('/add')
 		
 	});
 	
-	
+profileRouter.route('/partners')
+	.get ( function (req, res){
+		
+		// Call database service with the requested Id for the community
+		db.get_all_communities( function(dberr, queriedCommunities){
+			
+			if (dberr) {
+				res.status(404).send({"status": "error", "message": "Database error encountered", "error": dberr});
+			} else {
+				if(queriedCommunities && queriedCommunities.length > 0){
+					var resp = [];
+					for (i = 0; i < queriedCommunities.length; i++ ){
+
+						resp.push({
+							"partner_organization": queriedCommunities[i].partner_organization,
+							"region": queriedCommunities[i].region,
+							"country": queriedCommunities[i].country,
+							"postal_code": queriedCommunities[i].postal_code,
+							"program": queriedCommunities[i].program,
+							"status": queriedCommunities[i].status,
+							"type": queriedCommunities[i].type
+						})
+
+					}
+					res.status(200).send({"status": "success", "data": resp});
+				} else {
+					res.status(404).send({"status": "error", "message": "No community records found"});
+				}
+			}
+		});
+		
+	});
 	
 // API to get a community
 profileRouter.route('/:id')
