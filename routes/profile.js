@@ -96,6 +96,7 @@ profileRouter.route('/partners')
 					for (i = 0; i < queriedCommunities.length; i++ ){
 
 						resp.push({
+							"_id": queriedCommunities[i]._id,
 							"partner_organization": queriedCommunities[i].partner_organization,
 							"region": queriedCommunities[i].region,
 							"country": queriedCommunities[i].country,
