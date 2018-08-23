@@ -23,7 +23,7 @@ profileRouter.route('/add')
 		community.postal_code = req.body.postal_code;
 		community.status = "Pending";
 		community.type = req.body.type;
-		community.program = "Live-Local";
+		community.program = "live-local";
 		community.contacts = req.body.contacts;
 		
 		//find coordinates automatically based on name, country and region
@@ -142,6 +142,26 @@ profileRouter.route('/:id/status/update/:newStatus')
 		
 		// Call database service with the requested Id for the community
 		db.change_status( req.params.id, req.params.newStatus, function(dberr, updatedCommunity){
+			
+			if (dberr) {
+				res.status(404).send({"status": "error", "message": "Database error encountered", "error": dberr});
+			} else {
+				if(updatedCommunity){
+					res.status(200).send({"status": "success", "data": updatedCommunity});
+				} else {
+					res.status(404).send({"status": "error", "message": "No community records found"});
+				}
+			}
+		});
+		
+	});
+	
+// API to change program of a community
+profileRouter.route('/:id/program/update/:newProgram')
+	.put ( function (req, res){
+		
+		// Call database service with the requested Id for the community
+		db.change_program( req.params.id, req.params.newProgram, function(dberr, updatedCommunity){
 			
 			if (dberr) {
 				res.status(404).send({"status": "error", "message": "Database error encountered", "error": dberr});

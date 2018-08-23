@@ -124,6 +124,45 @@ var change_status = function(communityId, newStatus, callback){
 	
 };
 
+var change_program = function(communityId, newProgram, callback){
+	
+	Community.findByIdAndUpdate(communityId, {"program": newProgram}, function(dberr, updatedCommunity){
+		
+		if (dberr) {
+			
+			callback({
+					"error_code": 404,
+					"error_name": "DBError",
+					"error_message": dberr
+				},
+				null
+			);
+			
+		} else {
+			
+			if (updatedCommunity) {
+				
+				updatedCommunity.program = newProgram; //this line is here because the returned document is the previous version
+				callback(null, updatedCommunity);
+				
+			} else {
+				
+				callback({
+						"error_code": 404,
+						"error_name": "NotFound",
+						"error_message": "Db did not return object"
+					},
+					null
+				);
+				
+			}
+			
+		}
+		
+	});
+	
+};
+
 // Database Service to add or update the polygon on a community
 var add_modify_polygon = function(communityId, polygon, callback){
 	
@@ -402,6 +441,7 @@ module.exports = {
 	add_community: add_community,
 	get_community: get_community,
 	change_status: change_status,
+	change_program: change_program,
 	add_modify_polygon: add_modify_polygon,
 	delete_polygon: delete_polygon,
 	update_image_urls: update_image_urls,
