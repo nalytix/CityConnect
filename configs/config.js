@@ -13,7 +13,7 @@ var mongoConnectURI = "mongodb://localhost/cityconnect";
 var locationServiceBaseURL = 'https://maps.googleapis.com/maps/api/geocode/json?';
 var locationServiceAPIKey = 'AIzaSyDfGwmg9KlUFlof4ueVwZIEP9fTPQKcNT4';
 var locationServiceFormatString = 'format=json';
-var proximityInMiles = 20;
+var proximityInMiles = 5;
 
 // Messages
 fixedWelcomeMessage = "Welcome! You are in or near";
