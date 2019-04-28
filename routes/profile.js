@@ -373,15 +373,39 @@ profileRouter.route('/:user_id/:lat/:lng')
 					}
 				} else {
 
-					res.status(404).send({"status": "error", "error_msg": "Not Found"});	
+					if (config.nrooteFacts.length > 0) {
+						fact = config.nrooteFacts[functions.getRandomInt(config.nrooteFacts.length)];
+					}
+
+					var responseObject = {
+						"status": "success",
+						"data": {
+							"proximity_type": "near",
+							"welcome_message": config.nrooteWelcomeMessage,
+							"name": config.nrooteCityName,
+							"actual_name": "",
+							"partner_organization": "",
+							"country": "",
+							"region": "",
+							"postal_code": "",
+							"image_url": config.nrooteImageUrl,
+							"fact_message": config.nrooteFactMessage,
+							"fact": fact,
+							"status": "",
+							"type": "",
+							"program": ""
+						}	
+					}
 
 				}
 				
 				res.status(200).send(responseObject);
+				return;
 			} else {
 
 				// return the error condition
 				res.status(404).send(resp);
+				return;
 
 			}
 			
