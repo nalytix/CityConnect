@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Community = require('../models/community');
+var Special = require('../models/community_specials');
 
 
 // Database Service to add a new community
@@ -414,8 +415,7 @@ var get_all_communities = function(callback){
 		} else {
 			
 			if ( queriedCommunities && queriedCommunities.length > 0 ) {
-
-				
+	
 				callback(null, queriedCommunities);
 				
 			} else {
@@ -436,6 +436,81 @@ var get_all_communities = function(callback){
 	
 };
 
+
+// Database API to add specials
+var add_special = function(specialObject, callback){
+
+	var special = new Special(specialObject);
+
+	special.coordinates = {
+		"type": "Point", 
+		"coordinates": specialObject.latlng
+	};
+
+	special.save(function(saveErr, savedObject){
+
+		if (saveErr){
+
+			callback({
+					"error_code": 404,
+					"error_name": "DBError",
+					"error_message": "Database error when saving special",
+					"stack": saveErr
+				},
+				null
+			);
+			return;
+
+		} else {
+
+			callback(null, savedObject);
+			return;
+
+		}
+
+	})
+
+};
+
+// function to return specials within miles of a user
+var get_specials = function(lat, lng, proxInMeters, callback){
+
+	Special.find( { coordinates: 
+			{ $nearSphere:
+				{ $geometry: 
+					{ type: "Point", 
+					coordinates: [lng, lat] 
+					},
+					"$minDistance": 0,
+					"$maxDistance": proxInMeters
+				}
+				
+			} 
+		}, 
+		function(err, specialsList){
+
+			if (!err) {
+				var activeList = [];
+
+				var now = new Date();
+
+				for (i = 0; i < specialsList.length; i++){
+
+					if (specialsList[i].start_date <= now && specialsList[i].end_date >= now ) activeList.push(specialsList[i]);
+
+				}
+				callback({"status": "success", "specials":activeList});
+				return;
+			} else {
+				callback({"status": "error", "error_msg":err});
+				return;
+			}
+		}
+	);
+
+}
+
+
 module.exports = {
 	
 	add_community: add_community,
@@ -448,6 +523,8 @@ module.exports = {
 	update_facts: update_facts,
 	update_contacts: update_contacts,
 	get_current_community: get_current_community,
-	get_all_communities: get_all_communities
+	get_all_communities: get_all_communities,
+	add_special: add_special,
+	get_specials: get_specials
 
 };

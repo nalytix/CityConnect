@@ -352,55 +352,71 @@ profileRouter.route('/:user_id/:lat/:lng')
 						fact = communityList[0].facts[functions.getRandomInt(communityList[0].facts.length)];
 					}
 
-					var responseObject = {
-						"status": "success",
-						"data": {
-							"proximity_type": "near",
-							"welcome_message": welcomeMessage,
-							"name": communityList[0].display_name,
-							"actual_name": communityList[0].name,
-							"partner_organization": communityList[0].partner_organization,
-							"country": communityList[0].country,
-							"region": communityList[0].region,
-							"postal_code": communityList[0].postal_code,
-							"image_url": image_url,
-							"fact_message": factMessage,
-							"fact": fact,
-							"status": communityList[0].status,
-							"type": communityList[0].type,
-							"program": communityList[0].program
-						}	
-					}
+					db.get_specials(reqLat, reqLng, proximityInMeters * 4, function(resp){
+
+						var responseObject = {
+							"status": "success",
+							"data": {
+								"proximity_type": "near",
+								"welcome_message": welcomeMessage,
+								"name": communityList[0].display_name,
+								"actual_name": communityList[0].name,
+								"partner_organization": communityList[0].partner_organization,
+								"country": communityList[0].country,
+								"region": communityList[0].region,
+								"postal_code": communityList[0].postal_code,
+								"image_url": image_url,
+								"fact_message": factMessage,
+								"fact": fact,
+								"status": communityList[0].status,
+								"type": communityList[0].type,
+								"program": communityList[0].program,
+								"specials": (resp.specials) ? resp.specials : []
+							}	
+						}
+
+						res.status(200).send(responseObject);
+						return;
+
+					});
+
 				} else {
 
 					if (config.nrooteFacts.length > 0) {
 						fact = config.nrooteFacts[functions.getRandomInt(config.nrooteFacts.length)];
 					}
 
-					var responseObject = {
-						"status": "success",
-						"data": {
-							"proximity_type": "near",
-							"welcome_message": config.nrooteWelcomeMessage,
-							"name": config.nrooteCityName,
-							"actual_name": "",
-							"partner_organization": "",
-							"country": "",
-							"region": "",
-							"postal_code": "",
-							"image_url": config.nrooteImageUrl,
-							"fact_message": config.nrooteFactMessage,
-							"fact": fact,
-							"status": "",
-							"type": "",
-							"program": ""
-						}	
-					}
+					db.get_specials(reqLat, reqLng, proximityInMeters * 4, function(resp){
+
+						var responseObject = {
+							"status": "success",
+							"data": {
+								"proximity_type": "near",
+								"welcome_message": config.nrooteWelcomeMessage,
+								"name": config.nrooteCityName,
+								"actual_name": "",
+								"partner_organization": "",
+								"country": "",
+								"region": "",
+								"postal_code": "",
+								"image_url": config.nrooteImageUrl,
+								"fact_message": config.nrooteFactMessage,
+								"fact": fact,
+								"status": "",
+								"type": "",
+								"program": "",
+								"specials": (resp.specials) ? resp.specials : []
+							}	
+						}
+
+						res.status(200).send(responseObject);
+						return;
+
+					});
 
 				}
 				
-				res.status(200).send(responseObject);
-				return;
+				
 			} else {
 
 				// return the error condition

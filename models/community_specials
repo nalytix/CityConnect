@@ -1,0 +1,59 @@
+// imports
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+
+
+var SpecialsCoordinatesSchema = new Schema({
+	 
+	type 							: {type : String},
+	coordinates						: []
+
+ });
+
+ mongoose.model('SpecialsCoordinates',SpecialsCoordinatesSchema);
+
+ var ActionsSchema = new Schema({
+
+     title: String,
+     key: String,
+     desc: String
+
+ })
+
+ mongoose.model('Actions',ActionsSchema);
+
+ var MessageSchema = new Schema({
+
+     seq: Number,
+     icon: String,
+     icon_justification: String,
+     message: String
+
+ })
+
+ mongoose.model('Message',MessageSchema);
+
+var CommunitySpecialsSchema = new Schema({
+
+    name: String,
+    title: String,
+    description: String,
+    collapsed_desc: String,
+    sponsor: String,
+    address: String,
+    city: String,
+    region: String,
+    country: String,
+    postal_code: String,
+    coordinates: SpecialsCoordinatesSchema,
+    messages: [MessageSchema],
+    fineprint: String,
+    start_date: Date,
+    end_date: Date,
+    actions: [ActionsSchema]
+
+});
+
+var CommunitySpecials = mongoose.model('CommunitySpecials', CommunitySpecialsSchema);
+
+module.exports = CommunitySpecials;
