@@ -16,13 +16,14 @@ var locationServiceFormatString = 'format=json';
 var proximityInMiles = 5;
 
 // Messages
-fixedWelcomeMessage = "Welcome! You are in or near";
-fixedFactMessage = "Did you know?";
+var fixedWelcomeMessage = "You are connected to ";
+var fixedFactMessage = "Did you know?";
+var partnerRecognitionPrefix = "Brought to you by the ";
 
 
 // If not near an 'nroote community
 var nrooteImageUrl = "https://s3.amazonaws.com/nalytix-cityconnect/Dev/nroote1.jpg";
-var nrooteWelcomeMessage = "Sorry!! You are not in an";
+var nrooteWelcomeMessage = "You are not connected to an ";
 var nrooteFactMessage = "But, did you know?";
 var nrooteFacts = [
 	"'nroote is part of an ecosystem of applications used to create data-driven, digitally connected local communities called 'nroote communities.",
@@ -47,6 +48,7 @@ module.exports = {
 	fixedFactMessage: fixedFactMessage,
 	nrooteImageUrl: nrooteImageUrl,
 	nrooteWelcomeMessage: nrooteWelcomeMessage,
+	partnerRecognitionPrefix: partnerRecognitionPrefix,
 	nrooteFactMessage: nrooteFactMessage,
 	nrooteFacts: nrooteFacts,
 	nrooteCityName: nrooteCityName
