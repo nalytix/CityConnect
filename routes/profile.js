@@ -17,10 +17,13 @@ profileRouter.route('/add')
 		var community = {};
 		community.name = req.body.name;
 		community.display_name = req.body.display_name;
+		community.dandd_display_name = req.body.dandd_display_name;
 		community.partner_organization = req.body.partner_organization;
 		community.country = req.body.country;
 		community.region = req.body.region;
 		community.postal_code = req.body.postal_code;
+		community.nroote_partner = req.body.nroote_partner;
+		community.dandd_partner = req.body.dandd_partner;
 		community.status = "Pending";
 		community.type = req.body.type;
 		community.program = "live-local";

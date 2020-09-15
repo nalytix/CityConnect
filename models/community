@@ -34,6 +34,7 @@ mongoose.model('Contact',ContactSchema);
 var communitySchema = new Schema({
 	name: String,
 	display_name: String,
+	dandd_display_name: String,
 	partner_organization: String,
 	country: String,
 	region: String,
@@ -41,6 +42,9 @@ var communitySchema = new Schema({
 	polygon: PolygonSchema,
 	coordinates: CoordinatesSchema,
 	image_urls: [String],
+	dandd_image_urls: [String],
+	nroote_partner: Boolean,
+	dandd_partner: Boolean,
 	facts: [String],
 	status: String, // pending, silver, gold, platinum, inactive 
 	type: String, // suburban-manufacturing,suburban-residential,suburban-retail,metro,collegetown,tourism,rural
