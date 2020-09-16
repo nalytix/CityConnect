@@ -250,6 +250,32 @@ profileRouter.route('/:id/images/update')
 
 	});
 
+
+// API to update the DrinknDine images of the community
+profileRouter.route('/:id/dandd_images/update')
+	.post(function (req, res) {
+
+		//validate request has the right information
+		if (!req.body.dandd_image_urls) {
+			res.status(404).send({ "status": "error", "message": "Call is missing DrinknDine image urls in body" });
+			return;
+		}
+		// Call database service with the requested Id for the community
+		db.update_dandd_image_urls(req.params.id, req.body.dandd_image_urls, function (dberr, updatedCommunity) {
+
+			if (dberr) {
+				res.status(404).send({ "status": "error", "message": "Database error encountered", "error": dberr });
+			} else {
+				if (updatedCommunity) {
+					res.status(200).send({ "status": "success", "data": updatedCommunity });
+				} else {
+					res.status(404).send({ "status": "error", "message": "No community records found" });
+				}
+			}
+		});
+
+	});
+
 // API to update the facts of the community
 profileRouter.route('/:id/facts/update')
 	.post(function (req, res) {

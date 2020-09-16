@@ -4,459 +4,504 @@ var Special = require('../models/community_specials');
 
 
 // Database Service to add a new community
-var add_community = function(communityObj, callback){
-	
+var add_community = function (communityObj, callback) {
+
 	newCommunity = new Community(communityObj);
-	
+
 	newCommunity.coordinates = {
-		"type": "Point", 
+		"type": "Point",
 		"coordinates": communityObj.latlng
 	};
-	
-	newCommunity.save(function(dberr, savedObj){
-		
-		if(dberr){
+
+	newCommunity.save(function (dberr, savedObj) {
+
+		if (dberr) {
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": dberr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
 				null
 			);
 		} else {
-			
+
 			if (savedObj) {
-				
+
 				callback(null, savedObj);
-				
+
 			} else {
-				
+
 				callback({
-						"error_code": 404,
-						"error_name": "NotFound",
-						"error_message": "Db did not return saved object"
-					},
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return saved object"
+				},
 					null
 				);
-				
+
 			}
-			
+
 		}
-		
+
 	});
 
-};	
+};
 
 // Database Service to retrieve a community based on Id
-var get_community = function(communityId, callback){
-	
-	Community.findById(communityId, function(dberr, queriedCommunity){
-		
+var get_community = function (communityId, callback) {
+
+	Community.findById(communityId, function (dberr, queriedCommunity) {
+
 		if (dberr) {
-			
+
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": dberr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
 				null
 			);
-			
+
 		} else {
-			
+
 			if (queriedCommunity) {
-				
+
 				callback(null, queriedCommunity);
-				
+
 			} else {
-				
+
 				callback({
-						"error_code": 404,
-						"error_name": "NotFound",
-						"error_message": "Db did not return object"
-					},
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
 					null
 				);
-				
+
 			}
-			
+
 		}
-		
+
 	});
-	
+
 };
 
-var change_status = function(communityId, newStatus, callback){
-	
-	Community.findByIdAndUpdate(communityId, {"status": newStatus}, function(dberr, updatedCommunity){
-		
+var change_status = function (communityId, newStatus, callback) {
+
+	Community.findByIdAndUpdate(communityId, { "status": newStatus }, function (dberr, updatedCommunity) {
+
 		if (dberr) {
-			
+
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": dberr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
 				null
 			);
-			
+
 		} else {
-			
+
 			if (updatedCommunity) {
-				
+
 				updatedCommunity.status = newStatus; //this line is here because the returned document is the previous version
 				callback(null, updatedCommunity);
-				
+
 			} else {
-				
+
 				callback({
-						"error_code": 404,
-						"error_name": "NotFound",
-						"error_message": "Db did not return object"
-					},
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
 					null
 				);
-				
+
 			}
-			
+
 		}
-		
+
 	});
-	
+
 };
 
-var change_program = function(communityId, newProgram, callback){
-	
-	Community.findByIdAndUpdate(communityId, {"program": newProgram}, function(dberr, updatedCommunity){
-		
+var change_program = function (communityId, newProgram, callback) {
+
+	Community.findByIdAndUpdate(communityId, { "program": newProgram }, function (dberr, updatedCommunity) {
+
 		if (dberr) {
-			
+
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": dberr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
 				null
 			);
-			
+
 		} else {
-			
+
 			if (updatedCommunity) {
-				
+
 				updatedCommunity.program = newProgram; //this line is here because the returned document is the previous version
 				callback(null, updatedCommunity);
-				
+
 			} else {
-				
+
 				callback({
-						"error_code": 404,
-						"error_name": "NotFound",
-						"error_message": "Db did not return object"
-					},
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
 					null
 				);
-				
+
 			}
-			
+
 		}
-		
+
 	});
-	
+
 };
 
 // Database Service to add or update the polygon on a community
-var add_modify_polygon = function(communityId, polygon, callback){
-	
+var add_modify_polygon = function (communityId, polygon, callback) {
+
 	newPolygon = {
 		"type": "Polygon",
 		coordinates: polygon
 	};
-	
-	Community.findByIdAndUpdate(communityId, { polygon : newPolygon }, function( dberr, updatedCommunity ){
-		
+
+	Community.findByIdAndUpdate(communityId, { polygon: newPolygon }, function (dberr, updatedCommunity) {
+
 		if (dberr) {
-			
+
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": dberr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
 				null
 			);
-			
+
 		} else {
-			
+
 			if (updatedCommunity) {
-				
+
 				updatedCommunity.polygon = newPolygon; //this line is here because the returned document is the previous version
 				callback(null, updatedCommunity);
-				
+
 			} else {
-				
+
 				callback({
-						"error_code": 404,
-						"error_name": "NotFound",
-						"error_message": "Db did not return object"
-					},
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
 					null
 				);
-				
+
 			}
-			
+
 		}
-		
+
 	})
-	
+
 };
 
 
 // Database service to remove the polygon set on a community
-var delete_polygon = function(communityId, callback){
-	
-	Community.findByIdAndUpdate(communityId, {$unset: { polygon : 1 }}, function( dberr, updatedCommunity ){
-		
+var delete_polygon = function (communityId, callback) {
+
+	Community.findByIdAndUpdate(communityId, { $unset: { polygon: 1 } }, function (dberr, updatedCommunity) {
+
 		if (dberr) {
-			
+
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": dberr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
 				null
 			);
-			
+
 		} else {
-			
+
 			if (updatedCommunity) {
-				
+
 				updatedCommunity.polygon = undefined; //this line is here because the returned document is the previous version
 				callback(null, updatedCommunity);
-				
+
 			} else {
-				
+
 				callback({
-						"error_code": 404,
-						"error_name": "NotFound",
-						"error_message": "Db did not return object"
-					},
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
 					null
 				);
-				
+
 			}
-			
+
 		}
-		
+
 	})
-	
+
 };
 
 // Database service to update the list of images to promote a community
-var update_image_urls = function(communityId, urls, callback){
-	
-	Community.findByIdAndUpdate(communityId, { image_urls : urls }, function( dberr, updatedCommunity ){
-		
+var update_image_urls = function (communityId, urls, callback) {
+
+	Community.findByIdAndUpdate(communityId, { image_urls: urls }, function (dberr, updatedCommunity) {
+
 		if (dberr) {
-			
+
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": dberr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
 				null
 			);
-			
+
 		} else {
-			
+
 			if (updatedCommunity) {
-				
+
 				updatedCommunity.image_urls = urls; //this line is here because the returned document is the previous version
 				callback(null, updatedCommunity);
-				
+
 			} else {
-				
+
 				callback({
-						"error_code": 404,
-						"error_name": "NotFound",
-						"error_message": "Db did not return object"
-					},
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
 					null
 				);
-				
+
 			}
-			
+
 		}
-		
+
 	})
-	
+
+};
+
+
+// Database service to update the list of dandd images to promote a community
+var update_dandd_image_urls = function (communityId, urls, callback) {
+
+	Community.findByIdAndUpdate(communityId, { image_urls: urls }, function (dberr, updatedCommunity) {
+
+		if (dberr) {
+
+			callback({
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
+				null
+			);
+
+		} else {
+
+			if (updatedCommunity) {
+
+				updatedCommunity.dandd_image_urls = urls; //this line is here because the returned document is the previous version
+				callback(null, updatedCommunity);
+
+			} else {
+
+				callback({
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
+					null
+				);
+
+			}
+
+		}
+
+	})
+
 };
 
 
 // Database service to update the list of facts associated with a community
-var update_facts = function(communityId, facts, callback){
-	
-	Community.findByIdAndUpdate(communityId, { "facts" : facts }, function( dberr, updatedCommunity ){
-		
+var update_facts = function (communityId, facts, callback) {
+
+	Community.findByIdAndUpdate(communityId, { "facts": facts }, function (dberr, updatedCommunity) {
+
 		if (dberr) {
-			
+
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": dberr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
 				null
 			);
-			
+
 		} else {
-			
+
 			if (updatedCommunity) {
-				
+
 				updatedCommunity.facts = facts; //this line is here because the returned document is the previous version
 				callback(null, updatedCommunity);
-				
+
 			} else {
-				
+
 				callback({
-						"error_code": 404,
-						"error_name": "NotFound",
-						"error_message": "Db did not return object"
-					},
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
 					null
 				);
-				
+
 			}
-			
+
 		}
-		
+
 	})
-	
+
 };
 
 // Database service to update the list of contacts for a community
-var update_contacts = function(communityId, contacts, callback){
-	
-	Community.findByIdAndUpdate(communityId, { "contacts" : contacts }, function( dberr, updatedCommunity ){
-		
+var update_contacts = function (communityId, contacts, callback) {
+
+	Community.findByIdAndUpdate(communityId, { "contacts": contacts }, function (dberr, updatedCommunity) {
+
 		if (dberr) {
-			
+
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": dberr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
 				null
 			);
-			
+
 		} else {
-			
+
 			if (updatedCommunity) {
-				
+
 				updatedCommunity.contacts = contacts; //this line is here because the returned document is the previous version
 				callback(null, updatedCommunity);
-				
+
 			} else {
-				
+
 				callback({
-						"error_code": 404,
-						"error_name": "NotFound",
-						"error_message": "Db did not return object"
-					},
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
 					null
 				);
-				
+
 			}
-			
+
 		}
-		
+
 	})
-	
+
 };
 
-var get_current_community = function(lat, lng, proxInMeters, callback){
-	
-	Community.find( { coordinates: 
-							{ $nearSphere:
-								{ $geometry: 
-									{ type: "Point", 
-									  coordinates: [lng, lat] 
-									},
-									"$minDistance": 0,
-									"$maxDistance": proxInMeters
-								}
-								
-							} 
-						}, 
-						function(err, communityList){
-							
-							if (!err)
-								callback({"status": "success", "communityList":communityList});
-							else 
-								callback({"status": "error", "error_msg":err});
-							
-						}
+var get_current_community = function (lat, lng, proxInMeters, callback) {
+
+	Community.find({
+		coordinates:
+		{
+			$nearSphere:
+			{
+				$geometry:
+				{
+					type: "Point",
+					coordinates: [lng, lat]
+				},
+				"$minDistance": 0,
+				"$maxDistance": proxInMeters
+			}
+
+		}
+	},
+		function (err, communityList) {
+
+			if (!err)
+				callback({ "status": "success", "communityList": communityList });
+			else
+				callback({ "status": "error", "error_msg": err });
+
+		}
 	);
-	
+
 };
 
 // Database Service to retrieve a community based on Id
-var get_all_communities = function(callback){
-	
-	Community.find({}, function(dberr, queriedCommunities){
+var get_all_communities = function (callback) {
+
+	Community.find({}, function (dberr, queriedCommunities) {
 
 		if (dberr) {
-			
+
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": dberr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
 				null
 			);
-			
+
 		} else {
-			
-			if ( queriedCommunities && queriedCommunities.length > 0 ) {
-	
+
+			if (queriedCommunities && queriedCommunities.length > 0) {
+
 				callback(null, queriedCommunities);
-				
+
 			} else {
-				
+
 				callback({
-						"error_code": 404,
-						"error_name": "NotFound",
-						"error_message": "Db did not return object"
-					},
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
 					null
 				);
-				
+
 			}
-			
+
 		}
-		
+
 	});
-	
+
 };
 
 
 // Database API to add specials
-var add_special = function(specialObject, callback){
+var add_special = function (specialObject, callback) {
 
 	var special = new Special(specialObject);
 
 	special.coordinates = {
-		"type": "Point", 
+		"type": "Point",
 		"coordinates": specialObject.latlng
 	};
 
-	special.save(function(saveErr, savedObject){
+	special.save(function (saveErr, savedObject) {
 
-		if (saveErr){
+		if (saveErr) {
 
 			callback({
-					"error_code": 404,
-					"error_name": "DBError",
-					"error_message": "Database error when saving special",
-					"stack": saveErr
-				},
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": "Database error when saving special",
+				"stack": saveErr
+			},
 				null
 			);
 			return;
@@ -473,36 +518,40 @@ var add_special = function(specialObject, callback){
 };
 
 // function to return specials within miles of a user
-var get_specials = function(lat, lng, proxInMeters, callback){
+var get_specials = function (lat, lng, proxInMeters, callback) {
 
-	Special.find( { coordinates: 
-			{ $nearSphere:
-				{ $geometry: 
-					{ type: "Point", 
-					coordinates: [lng, lat] 
-					},
-					"$minDistance": 0,
-					"$maxDistance": proxInMeters
-				}
-				
-			} 
-		}, 
-		function(err, specialsList){
+	Special.find({
+		coordinates:
+		{
+			$nearSphere:
+			{
+				$geometry:
+				{
+					type: "Point",
+					coordinates: [lng, lat]
+				},
+				"$minDistance": 0,
+				"$maxDistance": proxInMeters
+			}
+
+		}
+	},
+		function (err, specialsList) {
 
 			if (!err) {
 				var activeList = [];
 
 				var now = new Date();
 
-				for (i = 0; i < specialsList.length; i++){
+				for (i = 0; i < specialsList.length; i++) {
 
-					if (specialsList[i].start_date <= now && specialsList[i].end_date >= now ) activeList.push(specialsList[i]);
+					if (specialsList[i].start_date <= now && specialsList[i].end_date >= now) activeList.push(specialsList[i]);
 
 				}
-				callback({"status": "success", "specials":activeList});
+				callback({ "status": "success", "specials": activeList });
 				return;
 			} else {
-				callback({"status": "error", "error_msg":err});
+				callback({ "status": "error", "error_msg": err });
 				return;
 			}
 		}
@@ -512,7 +561,7 @@ var get_specials = function(lat, lng, proxInMeters, callback){
 
 
 module.exports = {
-	
+
 	add_community: add_community,
 	get_community: get_community,
 	change_status: change_status,
@@ -520,6 +569,7 @@ module.exports = {
 	add_modify_polygon: add_modify_polygon,
 	delete_polygon: delete_polygon,
 	update_image_urls: update_image_urls,
+	update_dandd_image_urls: update_dandd_image_urls,
 	update_facts: update_facts,
 	update_contacts: update_contacts,
 	get_current_community: get_current_community,
