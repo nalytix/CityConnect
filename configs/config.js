@@ -13,7 +13,7 @@ var mongoConnectURI = "mongodb://localhost/cityconnect";
 var locationServiceBaseURL = 'https://maps.googleapis.com/maps/api/geocode/json?';
 var locationServiceAPIKey = 'AIzaSyDfGwmg9KlUFlof4ueVwZIEP9fTPQKcNT4';
 var locationServiceFormatString = 'format=json';
-var proximityInMiles = 5;
+var proximityInMiles = 40;
 
 // Messages
 var fixedWelcomeMessage = "You are connected to ";
@@ -35,6 +35,7 @@ var nrooteFacts = [
 	"When you use promotions provided through 'nroote's 'Live' tab at the associated local business, you get local loyalty points which can be redeemed for gifts or donated to charity for its cash value."
 ];
 var nrooteCityName = "'nroote community";
+var danddCityName = "'DrinknDine community";
 
 module.exports = {
 	serverName: serverName,
@@ -51,5 +52,6 @@ module.exports = {
 	partnerRecognitionPrefix: partnerRecognitionPrefix,
 	nrooteFactMessage: nrooteFactMessage,
 	nrooteFacts: nrooteFacts,
-	nrooteCityName: nrooteCityName
+	nrooteCityName: nrooteCityName,
+	danddCityName: danddCityName
 };

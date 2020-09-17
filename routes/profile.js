@@ -486,4 +486,119 @@ profileRouter.route('/:user_id/:lat/:lng')
 
 	});
 
+
+// API to get closest location
+profileRouter.route('/dandd/:user_id/:lat/:lng')
+	.get(function (req, res) {
+
+		var reqUser = req.params.user_id;
+		var reqLat = req.params.lat;
+		var reqLng = req.params.lng;
+		var reqProxInMiles = config.proximityInMiles;
+
+		//convert configuration in miles to meters
+		if (!reqProxInMiles || reqProxInMiles == null)
+			reqProxInMiles = config.communityProximity;
+
+		proximityInMeters = reqProxInMiles * 1609.344;
+
+		db.get_current_dandd_community(reqLat, reqLng, proximityInMeters, function (resp) {
+
+			if (resp.status == "success") {
+
+				if (resp.communityList.length > 0) {
+					var communityList = resp.communityList;
+					var image_url = "";
+					var fact = "";
+					var welcomeMessage = config.fixedWelcomeMessage;
+					var factMessage = config.fixedFactMessage;
+					var partnerRecognitionPrefix = config.partnerRecognitionPrefix;
+
+					// Find an image to send)
+					if (communityList[0].image_urls && communityList[0].image_urls.length > 0) {
+						image_url = communityList[0].image_urls[functions.getRandomInt(communityList[0].image_urls.length)];
+					}
+
+					if (communityList[0].facts && communityList[0].facts.length > 0) {
+						fact = communityList[0].facts[functions.getRandomInt(communityList[0].facts.length)];
+					}
+
+					db.get_specials(reqLat, reqLng, proximityInMeters * 4, function (resp) {
+
+						var responseObject = {
+							"status": "success",
+							"data": {
+								"proximity_type": "near",
+								"welcome_message": welcomeMessage,
+								"name": communityList[0].display_name,
+								"actual_name": communityList[0].name,
+								"partner_organization": communityList[0].partner_organization,
+								"partner_promotion_message": (communityList[0].partner_organization ? partnerRecognitionPrefix + communityList[0].partner_organization : ""),
+								"country": communityList[0].country,
+								"region": communityList[0].region,
+								"postal_code": communityList[0].postal_code,
+								"image_url": image_url,
+								"fact_message": factMessage,
+								"fact": fact,
+								"status": communityList[0].status,
+								"type": communityList[0].type,
+								"program": communityList[0].program,
+								"specials": (resp.specials) ? resp.specials : []
+							}
+						}
+
+						res.status(200).send(responseObject);
+						return;
+
+					});
+
+				} else {
+
+					if (config.nrooteFacts.length > 0) {
+						fact = config.nrooteFacts[functions.getRandomInt(config.nrooteFacts.length)];
+					}
+
+					db.get_specials(reqLat, reqLng, proximityInMeters * 4, function (resp) {
+
+						var responseObject = {
+							"status": "success",
+							"data": {
+								"proximity_type": "near",
+								"welcome_message": config.nrooteWelcomeMessage,
+								"name": config.danddCityName,
+								"actual_name": "",
+								"partner_organization": "",
+								"country": "",
+								"region": "",
+								"postal_code": "",
+								"image_url": config.nrooteImageUrl,
+								"fact_message": config.nrooteFactMessage,
+								"fact": fact,
+								"status": "",
+								"type": "",
+								"program": "",
+								"specials": (resp.specials) ? resp.specials : []
+							}
+						}
+
+						res.status(200).send(responseObject);
+						return;
+
+					});
+
+				}
+
+
+			} else {
+
+				// return the error condition
+				res.status(404).send(resp);
+				return;
+
+			}
+
+		});
+
+	});
+
 module.exports = profileRouter;

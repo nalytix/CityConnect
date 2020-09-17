@@ -432,9 +432,64 @@ var get_current_community = function (lat, lng, proxInMeters, callback) {
 	},
 		function (err, communityList) {
 
-			if (!err)
-				callback({ "status": "success", "communityList": communityList });
-			else
+
+
+			if (!err) {
+
+				var filteredCommunityList = [];
+
+				for (var i = 0; i < communityList.length; i++) {
+
+					if (communityList[i].nroote_partner) filteredCommunityList.push(communityList[i]);
+
+				}
+
+				callback({ "status": "success", "communityList": filteredCommunityList });
+
+			} else
+				callback({ "status": "error", "error_msg": err });
+
+		}
+	);
+
+};
+
+
+var get_current_dandd_community = function (lat, lng, proxInMeters, callback) {
+
+	Community.find({
+		coordinates:
+		{
+			$nearSphere:
+			{
+				$geometry:
+				{
+					type: "Point",
+					coordinates: [lng, lat]
+				},
+				"$minDistance": 0,
+				"$maxDistance": proxInMeters
+			}
+
+		}
+	},
+		function (err, communityList) {
+
+
+
+			if (!err) {
+
+				var filteredCommunityList = [];
+
+				for (var i = 0; i < communityList.length; i++) {
+
+					if (communityList[i].dandd_partner) filteredCommunityList.push(communityList[i]);
+
+				}
+
+				callback({ "status": "success", "communityList": filteredCommunityList });
+
+			} else
 				callback({ "status": "error", "error_msg": err });
 
 		}
@@ -620,6 +675,7 @@ module.exports = {
 	update_facts: update_facts,
 	update_contacts: update_contacts,
 	get_current_community: get_current_community,
+	get_current_dandd_community: get_current_dandd_community,
 	get_all_communities: get_all_communities,
 	add_special: add_special,
 	get_specials: get_specials,
