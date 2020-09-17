@@ -346,6 +346,32 @@ profileRouter.route('/:id/contacts/update')
 
 	});
 
+// function to update any attribute of a community
+profileRouter.route('/update')
+	.post((req, res) => {
+
+		var community = req.body;
+
+		// validate request has the right information
+		if (!req.body._id) {
+			res.status(404).send({ "status": "error", "message": "Call is missing request information" });
+			return;
+		}
+
+
+		// call the db function to update the user
+		db.update_community(community)
+			.then((data) => {
+				res.status(200).send({ "status": "success", "data": data });
+				return;
+			})
+			.catch((err) => {
+				res.status(404).send({ "status": "error", "message": "Unable to update community" });
+				return;
+			})
+
+	})
+
 // API to get closest location
 profileRouter.route('/:user_id/:lat/:lng')
 	.get(function (req, res) {

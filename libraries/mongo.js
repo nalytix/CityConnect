@@ -560,6 +560,53 @@ var get_specials = function (lat, lng, proxInMeters, callback) {
 }
 
 
+var update_community = (community) => {
+
+	return new Promise((resolve, reject) => {
+
+		Community.findById(community._id, (err, communityDoc) => {
+
+			if (!err) {
+				// update all the atributes that were sent in the payload (parameter to the function)
+
+				if (communityDoc) {
+
+					for (var att in community) {
+
+						(att != "_id") ? communityDoc[att] = community[att] : null;
+
+					}
+
+					communityDoc.save((saveErr, savedDoc) => {
+						if (saveErr) {
+							reject({
+								"error_code": 404,
+								"error_name": "DBError",
+								"error_message": "Error occurred when saving community",
+								"stack": saveErr
+							})
+						} else {
+							resolve(savedDoc);
+						}
+					})
+
+				}
+
+			} else {
+				reject({
+					"error_code": 404,
+					"error_name": "DBError",
+					"error_message": "Error occurred when querying community",
+					"stack": err
+				});
+			}
+		})
+
+	})
+
+}
+
+
 module.exports = {
 
 	add_community: add_community,
@@ -575,6 +622,7 @@ module.exports = {
 	get_current_community: get_current_community,
 	get_all_communities: get_all_communities,
 	add_special: add_special,
-	get_specials: get_specials
+	get_specials: get_specials,
+	update_community: update_community
 
 };
