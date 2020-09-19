@@ -515,8 +515,8 @@ profileRouter.route('/dandd/:user_id/:lat/:lng')
 					var partnerRecognitionPrefix = config.partnerRecognitionPrefix;
 
 					// Find an image to send)
-					if (communityList[0].image_urls && communityList[0].image_urls.length > 0) {
-						image_url = communityList[0].image_urls[functions.getRandomInt(communityList[0].image_urls.length)];
+					if (communityList[0].dandd_image_urls && communityList[0].dandd_image_urls.length > 0) {
+						image_url = communityList[0].dandd_image_urls[functions.getRandomInt(communityList[0].dandd_image_urls.length)];
 					}
 
 					if (communityList[0].facts && communityList[0].facts.length > 0) {

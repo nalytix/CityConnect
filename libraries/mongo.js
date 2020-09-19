@@ -294,7 +294,7 @@ var update_image_urls = function (communityId, urls, callback) {
 // Database service to update the list of dandd images to promote a community
 var update_dandd_image_urls = function (communityId, urls, callback) {
 
-	Community.findByIdAndUpdate(communityId, { image_urls: urls }, function (dberr, updatedCommunity) {
+	Community.findByIdAndUpdate(communityId, { dandd_image_urls: urls }, function (dberr, updatedCommunity) {
 
 		if (dberr) {
 
