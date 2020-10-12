@@ -23,7 +23,7 @@ var partnerRecognitionPrefix = "Brought to you by the ";
 
 // If not near an 'nroote community
 var nrooteImageUrl = "https://s3.amazonaws.com/nalytix-cityconnect/Dev/nroote1.jpg";
-var nrooteWelcomeMessage = "You are not connected to an ";
+var nrooteWelcomeMessage = "You are not near a ";
 var nrooteFactMessage = "But, did you know?";
 var nrooteFacts = [
 	"'nroote is part of an ecosystem of applications used to create data-driven, digitally connected local communities called 'nroote communities.",
@@ -35,7 +35,7 @@ var nrooteFacts = [
 	"When you use promotions provided through 'nroote's 'Live' tab at the associated local business, you get local loyalty points which can be redeemed for gifts or donated to charity for its cash value."
 ];
 var nrooteCityName = "'nroote community";
-var danddCityName = "'DrinknDine community";
+var danddCityName = "DrinknDine community";
 
 module.exports = {
 	serverName: serverName,
