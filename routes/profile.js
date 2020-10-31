@@ -276,6 +276,33 @@ profileRouter.route('/:id/dandd_images/update')
 
 	});
 
+
+// API to update the DrinknDine images of the community
+profileRouter.route('/:id/shoph_images/update')
+	.post(function (req, res) {
+
+		//validate request has the right information
+		if (!req.body.shoph_image_urls) {
+			res.status(404).send({ "status": "error", "message": "Call is missing ShopHere image urls in body" });
+			return;
+		}
+		// Call database service with the requested Id for the community
+		db.update_shoph_image_urls(req.params.id, req.body.shoph_image_urls, function (dberr, updatedCommunity) {
+
+			if (dberr) {
+				res.status(404).send({ "status": "error", "message": "Database error encountered", "error": dberr });
+			} else {
+				if (updatedCommunity) {
+					res.status(200).send({ "status": "success", "data": updatedCommunity });
+				} else {
+					res.status(404).send({ "status": "error", "message": "No community records found" });
+				}
+			}
+		});
+
+	});
+
+
 // API to update the facts of the community
 profileRouter.route('/:id/facts/update')
 	.post(function (req, res) {
@@ -566,6 +593,120 @@ profileRouter.route('/dandd/:user_id/:lat/:lng')
 								"proximity_type": "near",
 								"welcome_message": config.nrooteWelcomeMessage,
 								"name": config.danddCityName,
+								"actual_name": "",
+								"partner_organization": "",
+								"country": "",
+								"region": "",
+								"postal_code": "",
+								"image_url": config.nrooteImageUrl,
+								"fact_message": config.nrooteFactMessage,
+								"fact": fact,
+								"status": "",
+								"type": "",
+								"program": "",
+								"specials": (resp.specials) ? resp.specials : []
+							}
+						}
+
+						res.status(200).send(responseObject);
+						return;
+
+					});
+
+				}
+
+
+			} else {
+
+				// return the error condition
+				res.status(404).send(resp);
+				return;
+
+			}
+
+		});
+
+	});
+
+// API to get closest location
+profileRouter.route('/shoph/:user_id/:lat/:lng')
+	.get(function (req, res) {
+
+		var reqUser = req.params.user_id;
+		var reqLat = req.params.lat;
+		var reqLng = req.params.lng;
+		var reqProxInMiles = config.proximityInMiles;
+
+		//convert configuration in miles to meters
+		if (!reqProxInMiles || reqProxInMiles == null)
+			reqProxInMiles = config.communityProximity;
+
+		proximityInMeters = reqProxInMiles * 1609.344;
+
+		db.get_current_shoph_community(reqLat, reqLng, proximityInMeters, function (resp) {
+
+			if (resp.status == "success") {
+
+				if (resp.communityList.length > 0) {
+					var communityList = resp.communityList;
+					var image_url = "";
+					var fact = "";
+					var welcomeMessage = config.fixedWelcomeMessage;
+					var factMessage = config.fixedFactMessage;
+					var partnerRecognitionPrefix = config.partnerRecognitionPrefix;
+
+					// Find an image to send)
+					if (communityList[0].shoph_image_urls && communityList[0].shoph_image_urls.length > 0) {
+						image_url = communityList[0].shoph_image_urls[functions.getRandomInt(communityList[0].shoph_image_urls.length)];
+					}
+
+					if (communityList[0].facts && communityList[0].facts.length > 0) {
+						fact = communityList[0].facts[functions.getRandomInt(communityList[0].facts.length)];
+					}
+
+					db.get_specials(reqLat, reqLng, proximityInMeters * 4, function (resp) {
+
+						var responseObject = {
+							"status": "success",
+							"data": {
+								"proximity_type": "near",
+								"welcome_message": welcomeMessage,
+								"name": communityList[0].display_name,
+								"actual_name": communityList[0].name,
+								"partner_organization": communityList[0].partner_organization,
+								"partner_promotion_message": (communityList[0].partner_organization ? partnerRecognitionPrefix + communityList[0].partner_organization : ""),
+								"country": communityList[0].country,
+								"region": communityList[0].region,
+								"postal_code": communityList[0].postal_code,
+								"image_url": image_url,
+								"fact_message": factMessage,
+								"fact": fact,
+								"status": communityList[0].status,
+								"type": communityList[0].type,
+								"program": communityList[0].program,
+								"specials": (resp.specials) ? resp.specials : []
+							}
+						}
+
+						res.status(200).send(responseObject);
+						return;
+
+					});
+
+				} else {
+
+					if (config.nrooteFacts.length > 0) {
+						fact = config.nrooteFacts[functions.getRandomInt(config.nrooteFacts.length)];
+					}
+
+					db.get_specials(reqLat, reqLng, proximityInMeters * 4, function (resp) {
+
+						var responseObject = {
+							"status": "success",
+							"data": {
+								"proximity_type": "near",
+								"welcome_message": config.nrooteWelcomeMessage,
+								"name": config.shophCityName,
 								"actual_name": "",
 								"partner_organization": "",
 								"country": "",

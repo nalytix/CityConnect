@@ -332,6 +332,47 @@ var update_dandd_image_urls = function (communityId, urls, callback) {
 };
 
 
+// Database service to update the list of dandd images to promote a community
+var update_shoph_image_urls = function (communityId, urls, callback) {
+
+	Community.findByIdAndUpdate(communityId, { shoph_image_urls: urls }, function (dberr, updatedCommunity) {
+
+		if (dberr) {
+
+			callback({
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
+				null
+			);
+
+		} else {
+
+			if (updatedCommunity) {
+
+				updatedCommunity.shoph_image_urls = urls; //this line is here because the returned document is the previous version
+				callback(null, updatedCommunity);
+
+			} else {
+
+				callback({
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
+					null
+				);
+
+			}
+
+		}
+
+	})
+
+};
+
+
 // Database service to update the list of facts associated with a community
 var update_facts = function (communityId, facts, callback) {
 
@@ -484,6 +525,49 @@ var get_current_dandd_community = function (lat, lng, proxInMeters, callback) {
 				for (var i = 0; i < communityList.length; i++) {
 
 					if (communityList[i].dandd_partner) filteredCommunityList.push(communityList[i]);
+
+				}
+
+				callback({ "status": "success", "communityList": filteredCommunityList });
+
+			} else
+				callback({ "status": "error", "error_msg": err });
+
+		}
+	);
+
+};
+
+
+var get_current_shoph_community = function (lat, lng, proxInMeters, callback) {
+
+	Community.find({
+		coordinates:
+		{
+			$nearSphere:
+			{
+				$geometry:
+				{
+					type: "Point",
+					coordinates: [lng, lat]
+				},
+				"$minDistance": 0,
+				"$maxDistance": proxInMeters
+			}
+
+		}
+	},
+		function (err, communityList) {
+
+
+
+			if (!err) {
+
+				var filteredCommunityList = [];
+
+				for (var i = 0; i < communityList.length; i++) {
+
+					if (communityList[i].shoph_partner) filteredCommunityList.push(communityList[i]);
 
 				}
 
@@ -672,10 +756,12 @@ module.exports = {
 	delete_polygon: delete_polygon,
 	update_image_urls: update_image_urls,
 	update_dandd_image_urls: update_dandd_image_urls,
+	update_shoph_image_urls: update_shoph_image_urls,
 	update_facts: update_facts,
 	update_contacts: update_contacts,
 	get_current_community: get_current_community,
 	get_current_dandd_community: get_current_dandd_community,
+	get_current_shoph_community: get_current_shoph_community,
 	get_all_communities: get_all_communities,
 	add_special: add_special,
 	get_specials: get_specials,

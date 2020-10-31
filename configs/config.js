@@ -36,6 +36,7 @@ var nrooteFacts = [
 ];
 var nrooteCityName = "'nroote community";
 var danddCityName = "DrinknDine community";
+var shophCityName = "ShopHere community";
 
 module.exports = {
 	serverName: serverName,
@@ -53,5 +54,6 @@ module.exports = {
 	nrooteFactMessage: nrooteFactMessage,
 	nrooteFacts: nrooteFacts,
 	nrooteCityName: nrooteCityName,
-	danddCityName: danddCityName
+	danddCityName: danddCityName,
+	shophCityName: shophCityName
 };
