@@ -7,6 +7,7 @@ var mongoose = require('mongoose');
 var config = require('./configs/config.js');
 var profile = require('./routes/profile.js');
 var specials = require('./routes/specials.js');
+var offers = require('./routes/offers.js');
 
 mongoose.connect(config.mongodb);
 console.log("Successfully connected to " + config.mongodb);
@@ -27,6 +28,7 @@ var port = process.env.PORT || config.serverPort;
 
 app.use('/community/profile', profile);
 app.use('/community/specials', specials);
+app.use('/community/offers', offers);
 
 
 // START THE SERVER

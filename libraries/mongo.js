@@ -745,6 +745,30 @@ var update_community = (community) => {
 
 }
 
+var add_offer = (offer) => {
+
+	newOffer = new Offer(offer);
+      
+	// save the new offer
+	newOffer.save((err, savedDoc) => {
+
+		if (err) {
+			callback({
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": "Database error when saving offer",
+				"stack": err
+			}, null);
+			return;
+		} else {
+			callback(null, savedDoc);
+			return;
+		}
+
+	});
+
+}
+
 
 module.exports = {
 
@@ -765,6 +789,6 @@ module.exports = {
 	get_all_communities: get_all_communities,
 	add_special: add_special,
 	get_specials: get_specials,
-	update_community: update_community
-
+	update_community: update_community,
+	add_offer: add_offer
 };
