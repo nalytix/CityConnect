@@ -769,6 +769,54 @@ var add_offer = (offer) => {
 
 }
 
+var get_offer = (lat,lng) => {
+
+    return new Promise((resolve, reject) => {
+
+        //convert configuration in miles to meters
+        locationProximityInMeters = 20 * 1609.344;
+        
+        // Find locations near
+        Offer.aggregate(
+            [
+                {
+                    '$geoNear': {
+                        'near': {
+                            type: "Point",
+                            coordinates: [parseFloat(lng), parseFloat(lat)]
+                        },
+                        'spherical': true,
+                        'distanceField': 'dist',
+                        'maxDistance': locationProximityInMeters
+                    }
+                }
+            ],
+            (err, offers) => {
+
+                if (err) {
+					callback({
+						"error_code": 404,
+						"error_name": "DBError",
+						"error_message": "Database error when saving offer",
+						"stack": err
+					}, null);
+                    return;
+
+                } else {
+					callback(null, offers);
+					return;
+
+                }
+
+
+            });
+
+
+    })
+
+
+}
+
 
 module.exports = {
 
@@ -790,5 +838,6 @@ module.exports = {
 	add_special: add_special,
 	get_specials: get_specials,
 	update_community: update_community,
-	add_offer: add_offer
+	add_offer: add_offer,
+	get_offer: get_offer
 };
