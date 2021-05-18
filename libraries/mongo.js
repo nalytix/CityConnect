@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Community = require('../models/community');
 var Special = require('../models/community_specials');
+var Offer = require('../models/offer');
 
 
 // Database Service to add a new community
@@ -745,7 +746,7 @@ var update_community = (community) => {
 
 }
 
-var add_offer = (offer) => {
+var add_offer = (offer, callback) => {
 
 	newOffer = new Offer(offer);
       
@@ -769,50 +770,44 @@ var add_offer = (offer) => {
 
 }
 
-var get_offer = (lat,lng) => {
+var get_offer = (lat,lng, callback) => {
 
-    return new Promise((resolve, reject) => {
-
-        //convert configuration in miles to meters
-        locationProximityInMeters = 20 * 1609.344;
+	locationProximityInMeters = 20 * 1609.344;
         
-        // Find locations near
-        Offer.aggregate(
-            [
-                {
-                    '$geoNear': {
-                        'near': {
-                            type: "Point",
-                            coordinates: [parseFloat(lng), parseFloat(lat)]
-                        },
-                        'spherical': true,
-                        'distanceField': 'dist',
-                        'maxDistance': locationProximityInMeters
-                    }
-                }
-            ],
-            (err, offers) => {
+	// Find locations near
+	Offer.aggregate(
+		[
+			{
+				'$geoNear': {
+					'near': {
+						type: "Point",
+						coordinates: [parseFloat(lng), parseFloat(lat)]
+					},
+					'spherical': true,
+					'distanceField': 'dist',
+					'maxDistance': locationProximityInMeters
+				}
+			}
+		],
+		(err, offers) => {
+				
+			if (err) {
+				callback({
+					"error_code": 404,
+					"error_name": "DBError",
+					"error_message": "Database error when saving offer",
+					"stack": err
+				}, null);
+				return;
 
-                if (err) {
-					callback({
-						"error_code": 404,
-						"error_name": "DBError",
-						"error_message": "Database error when saving offer",
-						"stack": err
-					}, null);
-                    return;
+			} else {
+				callback(null, offers);
+				return;
 
-                } else {
-					callback(null, offers);
-					return;
-
-                }
-
-
-            });
+			}
 
 
-    })
+		});
 
 
 }
