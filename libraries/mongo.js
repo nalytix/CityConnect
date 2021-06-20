@@ -770,9 +770,14 @@ var add_offer = (offer, callback) => {
 
 }
 
-var get_offer = (lat,lng, callback) => {
+var get_offer = (lat,lng, offerIds, callback) => {
 
 	locationProximityInMeters = 20 * 1609.344;
+	
+	//Create array of offer ids to filter offers
+	offerObjectIds = offerIds.map(id => {
+		return mongoose.Types.ObjectId(id);
+	});
         
 	// Find locations near
 	Offer.aggregate(
@@ -787,6 +792,14 @@ var get_offer = (lat,lng, callback) => {
 					'distanceField': 'dist',
 					'maxDistance': locationProximityInMeters
 				}
+			},
+			{ 	
+				"$match": 
+					{ 
+						"_id": { 
+							"$nin": offerObjectIds
+						} 
+					} 
 			}
 		],
 		(err, offers) => {

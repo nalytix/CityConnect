@@ -30,7 +30,7 @@ offerRouter.route('/get').post((req,res) => {
         return;
     }
 
-    db.get_offer(req.body.lat, req.body.lng, function(dberr, queriedOffers) {
+    db.get_offer(req.body.lat, req.body.lng, req.body.offerIds, function(dberr, queriedOffers) {
 
         if (dberr) {
             res.status(404).send({ "status": "error", "message": "Database error encountered", "error": dberr });
