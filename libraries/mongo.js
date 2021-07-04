@@ -770,14 +770,9 @@ var add_offer = (offer, callback) => {
 
 }
 
-var get_offer = (lat,lng, offerIds, callback) => {
+var get_offers = (lat,lng, callback) => {
 
-	locationProximityInMeters = 20 * 1609.344;
-	
-	//Create array of offer ids to filter offers
-	offerObjectIds = offerIds.map(id => {
-		return mongoose.Types.ObjectId(id);
-	});
+	locationProximityInMeters = 20 * 1609.344;	
         
 	// Find locations near
 	Offer.aggregate(
@@ -792,14 +787,6 @@ var get_offer = (lat,lng, offerIds, callback) => {
 					'distanceField': 'dist',
 					'maxDistance': locationProximityInMeters
 				}
-			},
-			{ 	
-				"$match": 
-					{ 
-						"_id": { 
-							"$nin": offerObjectIds
-						} 
-					} 
 			}
 		],
 		(err, offers) => {
@@ -822,6 +809,44 @@ var get_offer = (lat,lng, offerIds, callback) => {
 
 		});
 
+}
+
+var get_offer_by_id = (id, callback) => {
+
+	Offer.findById(id, function (dberr, queriedOffer) {
+
+		if (dberr) {
+
+			callback({
+				"error_code": 404,
+				"error_name": "DBError",
+				"error_message": dberr
+			},
+				null
+			);
+
+		} else {
+			console.log("queriedOffer");
+			console.log(queriedOffer);
+			if (queriedOffer) {
+
+				callback(null, queriedOffer);
+
+			} else {
+
+				callback({
+					"error_code": 404,
+					"error_name": "NotFound",
+					"error_message": "Db did not return object"
+				},
+					null
+				);
+
+			}
+
+		}
+
+	});
 
 }
 
@@ -847,5 +872,6 @@ module.exports = {
 	get_specials: get_specials,
 	update_community: update_community,
 	add_offer: add_offer,
-	get_offer: get_offer
+	get_offers: get_offers,
+	get_offer_by_id: get_offer_by_id
 };

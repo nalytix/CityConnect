@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 
 // Offer can be on item or total amount
 offerTypeSchema = new mongoose.Schema({
-    _id: false,
     offer_on: String, // 'item' or 'cart'
     offer_value: String, // Amount or percentage
     menu_id: String // If offer_on is 'item'
