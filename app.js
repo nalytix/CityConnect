@@ -1,6 +1,6 @@
 // app.js
-var express    = require('express');        // call express
-var app        = express();                 // define our app using express
+var express = require('express');        // call express
+var app = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var http = require('http');
 var mongoose = require('mongoose');
@@ -12,17 +12,19 @@ var offers = require('./routes/offers.js');
 mongoose.connect(config.mongodb);
 console.log("Successfully connected to " + config.mongodb);
 
+
+
+app.use(function (req, res, next) {
+	res.header('Access-Control-Allow-Origin', "*");
+	res.header('Access-Control-Allow-Methods', 'GET,OPTIONS,PUT,POST,DELETE');
+	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, access-token');
+	next();
+});
+
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-app.use(function(req,res,next){
-	res.header('Access-Control-Allow-Origin',"*");
-	res.header('Access-Control-Allow-Methods','GET,PUT,POST,DELETE');
-	res.header('Access-Control-Allow-Headers','Content-Type');
-	next();
-});
 
 var port = process.env.PORT || config.serverPort;
 
