@@ -12,6 +12,7 @@ var OfferSchema = new mongoose.Schema({
 
     offer_title: String,
     store_name: String,    
+    business_id: String,
     location_name: String,    
     location_id: String,
     location_coordinates: {
