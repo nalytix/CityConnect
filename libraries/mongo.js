@@ -785,7 +785,12 @@ var get_offers = (lat,lng, callback) => {
 					},
 					'spherical': true,
 					'distanceField': 'dist',
-					'maxDistance': locationProximityInMeters
+					'maxDistance': locationProximityInMeters,
+					'query': {
+						'end_date' : {
+							'$gte': new Date()
+						}
+					}
 				}
 			}
 		],
