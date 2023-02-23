@@ -100,6 +100,8 @@ profileRouter.route('/partners')
 
 						resp.push({
 							"_id": queriedCommunities[i]._id,
+							"name": queriedCommunities[i].name,
+							"display_name": queriedCommunities[i].display_name,
 							"partner_organization": queriedCommunities[i].partner_organization,
 							"region": queriedCommunities[i].region,
 							"country": queriedCommunities[i].country,
